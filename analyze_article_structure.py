@@ -14,7 +14,12 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False
 ssl_context.verify_mode = ssl.CERT_NONE
-ssl_context.options |= ssl.OP_LEGACY_SERVER_CONNECT
+# Thêm option legacy renegotiation nếu có
+try:
+    ssl_context.options |= ssl.OP_LEGACY_SERVER_CONNECT
+except AttributeError:
+    # Fallback cho Python cũ hơn
+    pass
 
 def analyze_article_structure():
     """Phân tích cấu trúc HTML của các trang chi tiết bài viết"""
