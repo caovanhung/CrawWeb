@@ -203,6 +203,10 @@ class PhapLuatSpider(scrapy.Spider):
             for widget in content_element.css('.widget_info'):
                 widget.extract()
             
+            # Xóa phần widget (bài viết liên quan)
+            for widget in content_element.css('.widget'):
+                widget.extract()
+            
             # Xóa phần boxdata (video, ảnh liên quan)
             for box in content_element.css('.boxdata'):
                 box.extract()
@@ -222,6 +226,22 @@ class PhapLuatSpider(scrapy.Spider):
             # Xóa iframe (video comment)
             for iframe in content_element.css('iframe'):
                 iframe.extract()
+            
+            # Xóa script tags
+            for script in content_element.css('script'):
+                script.extract()
+            
+            # Xóa ins tags (quảng cáo)
+            for ins in content_element.css('ins'):
+                ins.extract()
+            
+            # Xóa noscript tags
+            for noscript in content_element.css('noscript'):
+                noscript.extract()
+            
+            # Xóa divend (phần cuối bài viết có thể chứa nội dung khác)
+            for divend in content_element.css('#divend'):
+                divend.extract()
             
             # Lấy text từ các thẻ p trong content đã được lọc
             content_parts = content_element.css('p::text').getall()
