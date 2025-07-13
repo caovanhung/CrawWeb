@@ -5,6 +5,7 @@ import re
 from urllib.parse import urljoin
 import os
 import hashlib
+from scrapy.selector import Selector
 
 
 class PhapLuatSpider(scrapy.Spider):
@@ -203,10 +204,6 @@ class PhapLuatSpider(scrapy.Spider):
             for widget in content_element.css('.widget_info'):
                 widget.extract()
             
-            # Xóa phần widget (bài viết liên quan)
-            for widget in content_element.css('.widget'):
-                widget.extract()
-            
             # Xóa phần boxdata (video, ảnh liên quan)
             for box in content_element.css('.boxdata'):
                 box.extract()
@@ -219,38 +216,85 @@ class PhapLuatSpider(scrapy.Spider):
             for keyword in content_element.css('.keysword'):
                 keyword.extract()
             
-            # Xóa phần btt-bottom (phần cuối trang)
-            for bottom in content_element.css('.btt-bottom'):
-                bottom.extract()
+            # Xóa phần two-box (Megastory, Infographics)
+            for two_box in content_element.css('.two-box'):
+                two_box.extract()
             
-            # Xóa iframe (video comment)
-            for iframe in content_element.css('iframe'):
-                iframe.extract()
+            # Xóa phần right-bar (quảng cáo)
+            for right_bar in content_element.css('.right-bar'):
+                right_bar.extract()
             
-            # Xóa script tags
-            for script in content_element.css('script'):
+            # Xóa phần swiper-slide (nội dung không liên quan)
+            for swiper in content_element.css('.swiper-slide'):
+                swiper.extract()
+            
+            # Xóa phần item-cb (nội dung không liên quan)
+            for item_cb in content_element.css('.item-cb'):
+                item_cb.extract()
+            
+            # Xóa phần ccr-box-mgz (Megastory)
+            for ccr_box in content_element.css('.ccr-box-mgz'):
+                ccr_box.extract()
+            
+            # Xóa phần cb-container-mgz (Infographics)
+            for cb_container in content_element.css('.cb-container-mgz'):
+                cb_container.extract()
+            
+            # Xóa phần share-sticky (chia sẻ)
+            for share_sticky in content_element.css('.share-sticky'):
+                share_sticky.extract()
+            
+            # Xóa phần action-link (chia sẻ mạng xã hội)
+            for action_link in content_element.css('.action-link'):
+                action_link.extract()
+            
+            # Xóa phần breadcrumb (đường dẫn)
+            for breadcrumb in content_element.css('.breadcrumb'):
+                breadcrumb.extract()
+            
+            # Xóa phần lc-bar (thanh điều hướng)
+            for lc_bar in content_element.css('.lc-bar'):
+                lc_bar.extract()
+            
+            # Xóa phần detail-title (tiêu đề đã được lấy riêng)
+            for title in content_element.css('.detail-title'):
+                title.extract()
+            
+            # Xóa phần sapo (tóm tắt đã được lấy riêng)
+            for sapo in content_element.css('.sapo'):
+                sapo.extract()
+            
+            # Xóa tất cả script và style
+            for script in content_element.css('script, style'):
                 script.extract()
             
-            # Xóa ins tags (quảng cáo)
-            for ins in content_element.css('ins'):
-                ins.extract()
+            # Xóa tất cả quảng cáo
+            for ad in content_element.css('[id*="adm"], [class*="ad"], [id*="ad"]'):
+                ad.extract()
             
-            # Xóa noscript tags
-            for noscript in content_element.css('noscript'):
-                noscript.extract()
+            # Lấy nội dung chính từ content_wrapper
+            main_content = content_element.css('.content_wrapper')
+            if main_content:
+                content = main_content[0].get()
+            else:
+                content = content_element.get()
             
-            # Xóa divend (phần cuối bài viết có thể chứa nội dung khác)
-            for divend in content_element.css('#divend'):
-                divend.extract()
+            # Làm sạch nội dung
+            content = re.sub(r'<script[^>]*>.*?</script>', '', content, flags=re.DOTALL)
+            content = re.sub(r'<style[^>]*>.*?</style>', '', content, flags=re.DOTALL)
+            content = re.sub(r'<!--.*?-->', '', content, flags=re.DOTALL)
             
-            # Lấy text từ các thẻ p trong content đã được lọc
-            content_parts = content_element.css('p::text').getall()
+            # Chuyển HTML thành text
+            content_text = Selector(text=content).get()
             
-            # Nếu không có thẻ p, lấy text trực tiếp
-            if not content_parts:
-                content_text = content_element.xpath('string()').get()
-                if content_text:
-                    content_parts = [content_text]
+            # Loại bỏ khoảng trắng thừa
+            content_text = re.sub(r'\s+', ' ', content_text).strip()
+            
+            # Loại bỏ các dòng trống
+            content_text = re.sub(r'\n\s*\n', '\n', content_text)
+            
+            print(f"DEBUG: Content length after cleaning: {len(content_text)}")
+            print(f"DEBUG: Content preview: {content_text[:200]}...")
         
         content = ' '.join([part.strip() for part in content_parts if part.strip()])
         
