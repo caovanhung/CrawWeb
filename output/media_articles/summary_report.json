@@ -1,0 +1,90 @@
+{
+  "total_articles": 10,
+  "processed_at": "2025-07-13T23:27:30.733458",
+  "total_images_found": 0,
+  "total_images_downloaded": 0,
+  "total_videos_found": 0,
+  "base_directory": "output/media_articles",
+  "reports": [
+    {
+      "article_title": "Bắt giữ vụ buôn lậu thuốc lá số lượng lớn",
+      "processed_at": "2025-07-13T23:27:20.032057",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/01_Bắt giữ vụ buôn lậu thuốc lá số lượng lớn"
+    },
+    {
+      "article_title": "Điều tra, làm rõ vụ án mạng khiến hai anh em ruột tử vong",
+      "processed_at": "2025-07-13T23:27:21.110381",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/02_Điều tra, làm rõ vụ án mạng khiến hai anh em ruột tử vong"
+    },
+    {
+      "article_title": "Đề nghị truy tố 3 bị can liên quan sai phạm khu 'đất vàng' tại TP Hồ Chí Minh",
+      "processed_at": "2025-07-13T23:27:22.188744",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/03_Đề nghị truy tố 3 bị can liên quan sai phạm khu 'đất vàng' tại TP Hồ Chí Minh"
+    },
+    {
+      "article_title": "Vụ án mạng khiến hai anh em ruột tử vong: Tạm giữ 2 nghi phạm",
+      "processed_at": "2025-07-13T23:27:23.266638",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/04_Vụ án mạng khiến hai anh em ruột tử vong_ Tạm giữ 2 nghi phạm"
+    },
+    {
+      "article_title": "Tây Ninh: Bắt giữ nghi can trong vụ giết người ở phường Long An",
+      "processed_at": "2025-07-13T23:27:24.346914",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/05_Tây Ninh_ Bắt giữ nghi can trong vụ giết người ở phường Long An"
+    },
+    {
+      "article_title": "Nghi phạm trong vụ dùng kéo sát hại mẹ vợ ở Tây Ninh về đầu thú",
+      "processed_at": "2025-07-13T23:27:25.430884",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/06_Nghi phạm trong vụ dùng kéo sát hại mẹ vợ ở Tây Ninh về đầu thú"
+    },
+    {
+      "article_title": "Ngăn chặn nhóm thanh thiếu niên mang hung khí tụ tập khu vực đèo Đá Trắng",
+      "processed_at": "2025-07-13T23:27:26.504885",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/07_Ngăn chặn nhóm thanh thiếu niên mang hung khí tụ tập khu vực đèo Đá Trắng"
+    },
+    {
+      "article_title": "Đồng Nai: Xe tải tông xe máy, một người tử vong tại chỗ",
+      "processed_at": "2025-07-13T23:27:27.579737",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/08_Đồng Nai_ Xe tải tông xe máy, một người tử vong tại chỗ"
+    },
+    {
+      "article_title": "Công an Hải Phòng thông tin vụ bắt giữ 'Tiến bịp' về tội tổ chức sử dụng trái phép chất ma túy",
+      "processed_at": "2025-07-13T23:27:28.654343",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/09_Công an Hải Phòng thông tin vụ bắt giữ 'Tiến bịp' về tội tổ chức sử dụng trái phép chất ma túy"
+    },
+    {
+      "article_title": "Khởi tố Chủ tịch hội đồng quản trị, Giám đốc Công ty Hoành Bồ",
+      "processed_at": "2025-07-13T23:27:29.732081",
+      "images_found": 0,
+      "images_downloaded": 0,
+      "videos_found": 0,
+      "article_dir": "output/media_articles/10_Khởi tố Chủ tịch hội đồng quản trị, Giám đốc Công ty Hoành Bồ"
+    }
+  ]
+}
