@@ -124,6 +124,7 @@ class PhapLuatSpider(scrapy.Spider):
         # Nếu chưa có title từ trang danh sách, lấy từ trang chi tiết
         if not title:
             title_selectors = [
+                'h1.detail-title::text',  # Selector chính xác từ HTML
                 'h1.title::text',
                 'h1::text', 
                 '.title::text',
@@ -133,7 +134,6 @@ class PhapLuatSpider(scrapy.Spider):
                 '.content h1::text',
                 '.article h1::text',
                 '.main h1::text',
-                '.detail-title::text',
                 '.news-title::text'
             ]
             for selector in title_selectors:
