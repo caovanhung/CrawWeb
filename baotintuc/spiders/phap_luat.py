@@ -246,23 +246,34 @@ class PhapLuatSpider(scrapy.Spider):
         """Tải ảnh từ bài viết"""
         images = []
         
-        # Tìm tất cả ảnh trong bài viết
-        img_selectors = [
-            '.content-detail img',
-            '.article-content img',
-            '.content img',
-            '.detail-content img',
-            '.article-body img',
-            '.post-content img',
-            '.entry-content img',
-            'img'
+        # Chỉ tìm ảnh trong phần nội dung chính của bài viết
+        content_selectors = [
+            '.content-detail',
+            '.article-content',
+            '.content',
+            '.detail-content',
+            '.article-body',
+            '.post-content',
+            '.entry-content',
+            '.main-content',
+            '.story-content'
         ]
         
-        for selector in img_selectors:
-            img_elements = response.css(selector)
-            if img_elements:
-                self.logger.info(f"Tìm thấy {len(img_elements)} ảnh với selector: {selector}")
+        # Tìm phần nội dung chính
+        content_element = None
+        for selector in content_selectors:
+            content_element = response.css(selector).first()
+            if content_element:
+                self.logger.info(f"Tìm thấy nội dung với selector: {selector}")
                 break
+        
+        if not content_element:
+            self.logger.warning("Không tìm thấy phần nội dung chính")
+            return images
+        
+        # Tìm ảnh chỉ trong phần nội dung
+        img_elements = content_element.css('img')
+        self.logger.info(f"Tìm thấy {len(img_elements)} ảnh trong nội dung bài viết")
         
         for i, img in enumerate(img_elements):
             img_src = img.css('::attr(src)').get()
@@ -272,19 +283,57 @@ class PhapLuatSpider(scrapy.Spider):
                 # Tạo URL đầy đủ
                 img_url = urljoin(response.url, img_src)
                 
-                # Tạo tên file ảnh
-                img_filename = self.generate_image_filename(img_url, img_alt)
-                img_path = os.path.join(self.images_dir, img_filename)
-                
-                # Thêm thông tin ảnh vào danh sách
-                images.append({
-                    'url': img_url,
-                    'alt': img_alt,
-                    'filename': img_filename,
-                    'local_path': img_path
-                })
+                # Lọc bỏ các ảnh không phải nội dung bài viết
+                if self.is_content_image(img_url, img_alt):
+                    # Tạo tên file ảnh
+                    img_filename = self.generate_image_filename(img_url, img_alt)
+                    img_path = os.path.join(self.images_dir, img_filename)
+                    
+                    # Thêm thông tin ảnh vào danh sách
+                    images.append({
+                        'url': img_url,
+                        'alt': img_alt,
+                        'filename': img_filename,
+                        'local_path': img_path
+                    })
         
         return images
+    
+    def is_content_image(self, img_url, img_alt):
+        """Kiểm tra xem ảnh có phải là ảnh nội dung bài viết không"""
+        # Lọc bỏ các ảnh quảng cáo, banner, icon
+        exclude_keywords = [
+            'banner', 'quang-cao', 'advertisement', 'ads',
+            'icon', 'logo', 'button', 'play', 'video-play',
+            'partner', 'sponsor', 'sidebar', 'widget',
+            'social', 'share', 'facebook', 'twitter',
+            'web_images', 'static', 'assets'
+        ]
+        
+        img_url_lower = img_url.lower()
+        img_alt_lower = img_alt.lower()
+        
+        # Kiểm tra URL
+        for keyword in exclude_keywords:
+            if keyword in img_url_lower:
+                return False
+        
+        # Kiểm tra alt text
+        for keyword in exclude_keywords:
+            if keyword in img_alt_lower:
+                return False
+        
+        # Lọc bỏ ảnh có kích thước quá nhỏ (thường là icon)
+        if any(size in img_url_lower for size in ['16x16', '32x32', '48x48', '64x64']):
+            return False
+        
+        # Lọc bỏ ảnh từ các domain quảng cáo
+        ad_domains = ['doubleclick', 'googleadservices', 'googlesyndication']
+        for domain in ad_domains:
+            if domain in img_url_lower:
+                return False
+        
+        return True
     
     def save_image(self, response):
         """Lưu ảnh xuống máy"""
