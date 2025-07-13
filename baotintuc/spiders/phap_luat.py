@@ -216,42 +216,6 @@ class PhapLuatSpider(scrapy.Spider):
             for keyword in content_element.css('.keysword'):
                 keyword.extract()
             
-            # Xóa phần two-box (Megastory, Infographics)
-            for two_box in content_element.css('.two-box'):
-                two_box.extract()
-            
-            # Xóa phần right-bar (quảng cáo)
-            for right_bar in content_element.css('.right-bar'):
-                right_bar.extract()
-            
-            # Xóa phần swiper-slide (nội dung không liên quan)
-            for swiper in content_element.css('.swiper-slide'):
-                swiper.extract()
-            
-            # Xóa phần item-cb (nội dung không liên quan)
-            for item_cb in content_element.css('.item-cb'):
-                item_cb.extract()
-            
-            # Xóa phần ccr-box-mgz (Megastory)
-            for ccr_box in content_element.css('.ccr-box-mgz'):
-                ccr_box.extract()
-            
-            # Xóa phần cb-container-mgz (Infographics)
-            for cb_container in content_element.css('.cb-container-mgz'):
-                cb_container.extract()
-            
-            # Xóa phần share-sticky (chia sẻ)
-            for share_sticky in content_element.css('.share-sticky'):
-                share_sticky.extract()
-            
-            # Xóa phần action-link (chia sẻ mạng xã hội)
-            for action_link in content_element.css('.action-link'):
-                action_link.extract()
-            
-            # Xóa phần breadcrumb (đường dẫn)
-            for breadcrumb in content_element.css('.breadcrumb'):
-                breadcrumb.extract()
-            
             # Xóa phần lc-bar (thanh điều hướng)
             for lc_bar in content_element.css('.lc-bar'):
                 lc_bar.extract()
@@ -264,38 +228,6 @@ class PhapLuatSpider(scrapy.Spider):
             for sapo in content_element.css('.sapo'):
                 sapo.extract()
             
-            # Xóa phần widget (bài viết liên quan)
-            for widget in content_element.css('.widget'):
-                widget.extract()
-            
-            # Xóa phần boxnews (tin đọc nhiều nhất, tin cùng chuyên mục)
-            for boxnews in content_element.css('.boxnews'):
-                boxnews.extract()
-            
-            # Xóa phần boxlist (tin mới nhất)
-            for boxlist in content_element.css('.boxlist'):
-                boxlist.extract()
-            
-            # Xóa phần author (tác giả)
-            for author in content_element.css('.author'):
-                author.extract()
-            
-            # Xóa phần likeshare (chia sẻ mạng xã hội)
-            for likeshare in content_element.css('.likeshare'):
-                likeshare.extract()
-            
-            # Xóa phần keysword (từ khóa)
-            for keysword in content_element.css('.keysword'):
-                keysword.extract()
-            
-            # Xóa phần btt-bottom (phần cuối trang)
-            for btt_bottom in content_element.css('.btt-bottom'):
-                btt_bottom.extract()
-            
-            # Xóa phần iframe (comment)
-            for iframe in content_element.css('iframe'):
-                iframe.extract()
-            
             # Xóa tất cả script và style
             for script in content_element.css('script, style'):
                 script.extract()
@@ -304,37 +236,80 @@ class PhapLuatSpider(scrapy.Spider):
             for ad in content_element.css('[id*="adm"], [class*="ad"], [id*="ad"]'):
                 ad.extract()
             
-            # Xóa tất cả ins (quảng cáo)
-            for ins in content_element.css('ins'):
-                ins.extract()
+            # Xóa phần two-box (Megastory và Infographics)
+            for two_box in content_element.css('.two-box'):
+                two_box.extract()
             
-            # Xóa tất cả noscript
-            for noscript in content_element.css('noscript'):
-                noscript.extract()
+            # Xóa phần right-bar (quảng cáo bên phải)
+            for right_bar in content_element.css('.right-bar'):
+                right_bar.extract()
+            
+            # Xóa phần swiper-slide (ảnh liên quan)
+            for swiper in content_element.css('.swiper-slide'):
+                swiper.extract()
+            
+            # Xóa phần item-cb (bài viết liên quan)
+            for item_cb in content_element.css('.item-cb'):
+                item_cb.extract()
+            
+            # Xóa phần box_news (tin tức liên quan)
+            for box_news in content_element.css('.box_news'):
+                box_news.extract()
+            
+            # Xóa phần ccr-list-mgz (danh sách tin liên quan)
+            for ccr_list in content_element.css('.ccr-list-mgz'):
+                ccr_list.extract()
+            
+            # Xóa phần ccr-box-mgz (hộp tin liên quan)
+            for ccr_box in content_element.css('.ccr-box-mgz'):
+                ccr_box.extract()
+            
+            # Xóa phần cb-container-mgz (container tin liên quan)
+            for cb_container in content_element.css('.cb-container-mgz'):
+                cb_container.extract()
+            
+            # Xóa phần ccr-item (item tin liên quan)
+            for ccr_item in content_element.css('.ccr-item'):
+                ccr_item.extract()
+            
+            # Xóa phần action-link (chia sẻ mạng xã hội)
+            for action_link in content_element.css('.action-link'):
+                action_link.extract()
+            
+            # Xóa phần breadcrumb (đường dẫn)
+            for breadcrumb in content_element.css('.breadcrumb'):
+                breadcrumb.extract()
+            
+            # Xóa phần share share-sticky (chia sẻ)
+            for share_sticky in content_element.css('.share.share-sticky'):
+                share_sticky.extract()
             
             # Lấy nội dung chính từ content_wrapper
             main_content = content_element.css('.content_wrapper')
             if main_content:
-                content_text = main_content[0].xpath('string()').get()
+                content_html = main_content[0].get()
             else:
-                content_text = content_element.xpath('string()').get()
+                content_html = content_element.get()
             
             # Làm sạch nội dung
-            if content_text:
-                # Loại bỏ khoảng trắng thừa
-                content_text = re.sub(r'\s+', ' ', content_text).strip()
-                
-                # Loại bỏ các dòng trống
-                content_text = re.sub(r'\n\s*\n', '\n', content_text)
-                
-                # Loại bỏ các ký tự đặc biệt không cần thiết
-                content_text = re.sub(r'[\r\t]', ' ', content_text)
-                
-                print(f"DEBUG: Content length after cleaning: {len(content_text)}")
-                print(f"DEBUG: Content preview: {content_text[:200]}...")
-                
-                # Thêm vào content_parts
-                content_parts.append(content_text)
+            content_html = re.sub(r'<script[^>]*>.*?</script>', '', content_html, flags=re.DOTALL)
+            content_html = re.sub(r'<style[^>]*>.*?</style>', '', content_html, flags=re.DOTALL)
+            content_html = re.sub(r'<!--.*?-->', '', content_html, flags=re.DOTALL)
+            
+            # Chuyển HTML thành text
+            content_text = Selector(text=content_html).get()
+            
+            # Loại bỏ khoảng trắng thừa
+            content_text = re.sub(r'\s+', ' ', content_text).strip()
+            
+            # Loại bỏ các dòng trống
+            content_text = re.sub(r'\n\s*\n', '\n', content_text)
+            
+            # Cắt nội dung tại điểm kết thúc bài viết chính (TTXVN)
+            if '(TTXVN)' in content_text:
+                content_text = content_text.split('(TTXVN)')[0] + '(TTXVN)'
+            
+            content = content_text
         
         # Nếu không có content_parts, thử lấy text trực tiếp từ content_element
         if not content_parts and content_element:
