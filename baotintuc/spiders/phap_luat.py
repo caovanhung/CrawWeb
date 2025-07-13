@@ -315,6 +315,18 @@ class PhapLuatSpider(scrapy.Spider):
                     # Loại bỏ tất cả phần còn lại
                     content_text = content_text.strip()
             
+            # Loại bỏ các phần không phải nội dung chính bằng regex
+            # Loại bỏ phần "Hải quan bắt giữ..." và các phần tương tự
+            content_text = re.sub(r'(.*?\(TTXVN\)).*', r'\1', content_text, flags=re.DOTALL)
+            
+            # Loại bỏ các phần không phải nội dung chính
+            content_text = re.sub(r'Chia sẻ:.*', '', content_text, flags=re.DOTALL)
+            content_text = re.sub(r'Từ khóa:.*', '', content_text, flags=re.DOTALL)
+            content_text = re.sub(r'Video.*', '', content_text, flags=re.DOTALL)
+            content_text = re.sub(r'Ảnh.*', '', content_text, flags=re.DOTALL)
+            content_text = re.sub(r'Megastory.*', '', content_text, flags=re.DOTALL)
+            content_text = re.sub(r'Infographics.*', '', content_text, flags=re.DOTALL)
+            
             content = content_text
         
         # Nếu không có content_parts, thử lấy text trực tiếp từ content_element
