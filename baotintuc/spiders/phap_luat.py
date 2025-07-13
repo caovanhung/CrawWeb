@@ -123,7 +123,24 @@ class PhapLuatSpider(scrapy.Spider):
         
         # Nếu chưa có title từ trang danh sách, lấy từ trang chi tiết
         if not title:
-            title = response.css('h1.title::text, h1::text, .title::text').get()
+            title_selectors = [
+                'h1.title::text',
+                'h1::text', 
+                '.title::text',
+                '.article-title::text',
+                '.post-title::text',
+                '.entry-title::text',
+                '.content h1::text',
+                '.article h1::text',
+                '.main h1::text',
+                '.detail-title::text',
+                '.news-title::text'
+            ]
+            for selector in title_selectors:
+                title = response.css(selector).get()
+                if title and title.strip():
+                    self.logger.info(f"Tìm thấy title với selector: {selector}")
+                    break
         
         # Nếu chưa có summary từ trang danh sách, lấy từ trang chi tiết
         if not summary:
@@ -177,8 +194,19 @@ class PhapLuatSpider(scrapy.Spider):
         # Tải ảnh từ bài viết
         images = self.download_images(response)
         
-        # Lưu bài viết dưới dạng HTML
+        # Lưu bài viết dưới dạng HTML để debug
         article_filename = self.save_article_html(response, title)
+        
+        # Debug: Lưu HTML cho phân tích
+        # Sử dụng biến instance để đếm số bài viết
+        if not hasattr(self, 'article_count'):
+            self.article_count = 0
+        self.article_count += 1
+        
+        debug_filename = f"output/debug_article_{self.article_count}.html"
+        with open(debug_filename, 'w', encoding='utf-8') as f:
+            f.write(response.text)
+        self.logger.info(f"Đã lưu HTML debug vào: {debug_filename}")
         
         # Tạo item
         item = BaotintucItem()
