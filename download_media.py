@@ -9,8 +9,12 @@ from urllib.parse import urljoin, urlparse
 import re
 from datetime import datetime
 import time
+import urllib3
 
-# Tắt SSL verification
+# Tắt cảnh báo SSL
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Cấu hình SSL để tương thích với server cũ
 ssl._create_default_https_context = ssl._create_unverified_context
 
 class MediaDownloader:
@@ -19,6 +23,19 @@ class MediaDownloader:
         self.base_dir = 'output/media_articles'
         self.session = requests.Session()
         self.session.verify = False
+        
+        # Cấu hình SSL adapter để tương thích với server cũ
+        from requests.adapters import HTTPAdapter
+        from urllib3.util.ssl_ import create_urllib3_context
+        
+        class CustomHTTPAdapter(HTTPAdapter):
+            def init_poolmanager(self, *args, **kwargs):
+                context = create_urllib3_context()
+                context.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+                kwargs['ssl_context'] = context
+                return super().init_poolmanager(*args, **kwargs)
+        
+        self.session.mount('https://', CustomHTTPAdapter())
         
         # Headers để giả lập browser
         self.headers = {
