@@ -77,6 +77,31 @@ class MediaDownloader:
         """Trích xuất ảnh từ HTML của bài viết (chỉ ảnh trong nội dung)"""
         images = []
         
+        # Tìm ảnh từ meta tags (ảnh chính của bài viết)
+        meta_patterns = [
+            r'<meta[^>]*property="og:image"[^>]*content="([^"]*)"[^>]*>',
+            r'<meta[^>]*name="twitter:image"[^>]*content="([^"]*)"[^>]*>',
+            r'<meta[^>]*itemprop="image"[^>]*content="([^"]*)"[^>]*>',
+        ]
+        
+        for pattern in meta_patterns:
+            matches = re.findall(pattern, html_content, re.IGNORECASE)
+            for match in matches:
+                if match and self.is_content_image(match, "main_image"):
+                    # Chuyển URL tương đối thành tuyệt đối
+                    if match.startswith('/'):
+                        img_url = urljoin(article_url, match)
+                    elif not match.startswith('http'):
+                        img_url = urljoin(article_url, match)
+                    else:
+                        img_url = match
+                    
+                    images.append({
+                        'url': img_url,
+                        'alt': 'main_image',
+                        'type': 'meta_image'
+                    })
+        
         # Tìm phần nội dung bài viết chính (thường trong div có class chứa 'content', 'detail', 'article')
         content_patterns = [
             r'<div[^>]*class="[^"]*detail-content[^"]*"[^>]*>(.*?)</div>',
@@ -168,6 +193,10 @@ class MediaDownloader:
         ]
         
         is_valid_domain = any(domain in img_url_lower for domain in valid_domains)
+        
+        # Nếu là ảnh từ meta tags (ảnh chính), cho phép bỏ qua kiểm tra kích thước
+        if img_alt == "main_image":
+            return is_valid_domain
         
         # Chỉ lấy ảnh có kích thước lớn (thường là ảnh nội dung)
         # Loại bỏ ảnh có kích thước nhỏ hơn 300x200
