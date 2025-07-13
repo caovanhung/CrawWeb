@@ -200,8 +200,8 @@ class PhapLuatSpider(scrapy.Spider):
             for concern in content_element.css('.list-concern, #plhMain_NewsDetail1_divRelation'):
                 concern.extract()
             
-            # Xóa phần widget_info (bài viết liên quan)
-            for widget in content_element.css('.widget_info'):
+            # Xóa phần widget và widget_info (bài viết liên quan)
+            for widget in content_element.css('.widget, .widget_info'):
                 widget.extract()
             
             # Xóa phần boxdata (video, ảnh liên quan)
