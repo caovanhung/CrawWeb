@@ -154,13 +154,17 @@ class MediaDownloader:
         img_url_lower = img_url.lower()
         img_alt_lower = img_alt.lower()
         
+        # Nếu là ảnh từ meta tags (ảnh chính), luôn cho phép
+        if img_alt == "main_image":
+            return True
+        
         # Loại bỏ ảnh quảng cáo/banner
         ad_keywords = [
             'quang-cao', 'advertisement', 'ads', 'banner', 'sponsor',
             'quảng cáo', 'banner', 'sponsor', 'ad', 'ads', 'logo',
             'thời tiết', 'thời sự', 'nổi bật', 'tuần qua', '24h',
             'vnanet', 'vietnamplus', 'vietnamnews', 'bnews', 'lecourrier',
-            'nxb thông tấn', 'legal forum'
+            'nxb thông tấn', 'legal forum', 'avata-tinong'
         ]
         
         # Kiểm tra URL và alt text có chứa từ khóa quảng cáo
@@ -168,23 +172,11 @@ class MediaDownloader:
             if keyword in img_url_lower or keyword in img_alt_lower:
                 return False
         
-        # Loại bỏ ảnh có kích thước nhỏ (thường là icon, avatar)
-        size_patterns = [
-            r'(\d+)x(\d+)',  # 100x100, 200x200
-            r'thumb', 'thumbnail', 'icon', 'avatar'
-        ]
-        
-        for pattern in size_patterns:
-            if re.search(pattern, img_url_lower):
-                # Kiểm tra nếu là ảnh nhỏ thì bỏ qua
-                if 'thumb' in img_url_lower or 'icon' in img_url_lower or 'avatar' in img_url_lower:
-                    return False
-        
         # Loại bỏ ảnh có đuôi .gif (thường là banner quảng cáo)
         if img_url_lower.endswith('.gif'):
             return False
         
-        # Chỉ lấy ảnh từ domain chính của baotintuc.vn và có kích thước lớn
+        # Chỉ lấy ảnh từ domain chính của baotintuc.vn
         valid_domains = [
             'baotintuc.vn',
             'cdnmedia.baotintuc.vn',
@@ -192,21 +184,7 @@ class MediaDownloader:
             'media.baotintuc.vn'
         ]
         
-        is_valid_domain = any(domain in img_url_lower for domain in valid_domains)
-        
-        # Nếu là ảnh từ meta tags (ảnh chính), cho phép bỏ qua kiểm tra kích thước
-        if img_alt == "main_image":
-            return is_valid_domain
-        
-        # Chỉ lấy ảnh có kích thước lớn (thường là ảnh nội dung)
-        # Loại bỏ ảnh có kích thước nhỏ hơn 300x200
-        size_match = re.search(r'(\d+)x(\d+)', img_url_lower)
-        if size_match:
-            width, height = int(size_match.group(1)), int(size_match.group(2))
-            if width < 300 or height < 200:
-                return False
-        
-        return is_valid_domain
+        return any(domain in img_url_lower for domain in valid_domains)
     
     def extract_videos_from_html(self, html_content):
         """Trích xuất video URLs từ HTML (chỉ video trong nội dung)"""
@@ -232,6 +210,10 @@ class MediaDownloader:
     def is_content_video(self, video_url):
         """Kiểm tra xem video có phải là video nội dung bài viết không"""
         video_url_lower = video_url.lower()
+        
+        # Loại bỏ video comment (Comment.aspx)
+        if 'comment.aspx' in video_url_lower:
+            return False
         
         # Loại bỏ video quảng cáo
         ad_keywords = [
