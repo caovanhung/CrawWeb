@@ -77,7 +77,23 @@ class MediaDownloader:
         """Trích xuất ảnh từ HTML của bài viết (chỉ ảnh trong nội dung)"""
         images = []
         
-        # Tìm ảnh trong các thẻ img
+        # Tìm phần nội dung bài viết chính (thường trong div có class chứa 'content', 'detail', 'article')
+        content_patterns = [
+            r'<div[^>]*class="[^"]*detail-content[^"]*"[^>]*>(.*?)</div>',
+            r'<div[^>]*class="[^"]*content[^"]*"[^>]*>(.*?)</div>',
+            r'<div[^>]*class="[^"]*article-content[^"]*"[^>]*>(.*?)</div>',
+            r'<div[^>]*class="[^"]*detail-body[^"]*"[^>]*>(.*?)</div>',
+            r'<article[^>]*>(.*?)</article>',
+        ]
+        
+        content_html = html_content
+        for pattern in content_patterns:
+            matches = re.findall(pattern, html_content, re.IGNORECASE | re.DOTALL)
+            if matches:
+                content_html = matches[0]
+                break
+        
+        # Tìm ảnh trong phần nội dung
         img_patterns = [
             r'<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*>',
             r'<img[^>]*alt="([^"]*)"[^>]*src="([^"]*)"[^>]*>',
@@ -85,7 +101,7 @@ class MediaDownloader:
         ]
         
         for pattern in img_patterns:
-            matches = re.findall(pattern, html_content, re.IGNORECASE)
+            matches = re.findall(pattern, content_html, re.IGNORECASE)
             for match in matches:
                 if len(match) == 2:
                     img_url, img_alt = match
@@ -110,14 +126,17 @@ class MediaDownloader:
     
     def is_content_image(self, img_url, img_alt):
         """Kiểm tra xem ảnh có phải là ảnh nội dung bài viết không"""
-        # Loại bỏ ảnh quảng cáo
-        ad_keywords = [
-            'quang-cao', 'advertisement', 'ads', 'banner', 'sponsor',
-            'quảng cáo', 'banner', 'sponsor', 'ad', 'ads'
-        ]
-        
         img_url_lower = img_url.lower()
         img_alt_lower = img_alt.lower()
+        
+        # Loại bỏ ảnh quảng cáo/banner
+        ad_keywords = [
+            'quang-cao', 'advertisement', 'ads', 'banner', 'sponsor',
+            'quảng cáo', 'banner', 'sponsor', 'ad', 'ads', 'logo',
+            'thời tiết', 'thời sự', 'nổi bật', 'tuần qua', '24h',
+            'vnanet', 'vietnamplus', 'vietnamnews', 'bnews', 'lecourrier',
+            'nxb thông tấn', 'legal forum'
+        ]
         
         # Kiểm tra URL và alt text có chứa từ khóa quảng cáo
         for keyword in ad_keywords:
@@ -136,7 +155,11 @@ class MediaDownloader:
                 if 'thumb' in img_url_lower or 'icon' in img_url_lower or 'avatar' in img_url_lower:
                     return False
         
-        # Chỉ lấy ảnh từ domain chính của baotintuc.vn
+        # Loại bỏ ảnh có đuôi .gif (thường là banner quảng cáo)
+        if img_url_lower.endswith('.gif'):
+            return False
+        
+        # Chỉ lấy ảnh từ domain chính của baotintuc.vn và có kích thước lớn
         valid_domains = [
             'baotintuc.vn',
             'cdnmedia.baotintuc.vn',
@@ -145,6 +168,14 @@ class MediaDownloader:
         ]
         
         is_valid_domain = any(domain in img_url_lower for domain in valid_domains)
+        
+        # Chỉ lấy ảnh có kích thước lớn (thường là ảnh nội dung)
+        # Loại bỏ ảnh có kích thước nhỏ hơn 300x200
+        size_match = re.search(r'(\d+)x(\d+)', img_url_lower)
+        if size_match:
+            width, height = int(size_match.group(1)), int(size_match.group(2))
+            if width < 300 or height < 200:
+                return False
         
         return is_valid_domain
     
