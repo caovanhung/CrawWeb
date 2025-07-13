@@ -4,6 +4,17 @@ from bs4 import BeautifulSoup
 import re
 from urllib.parse import urljoin, urlparse
 import time
+import urllib3
+import ssl
+
+# Tắt cảnh báo SSL
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Tạo SSL context cho legacy renegotiation
+ssl_context = ssl.create_default_context()
+ssl_context.check_hostname = False
+ssl_context.verify_mode = ssl.CERT_NONE
+ssl_context.options |= ssl.OP_LEGACY_SERVER_CONNECT
 
 def analyze_article_structure():
     """Phân tích cấu trúc HTML của các trang chi tiết bài viết"""
@@ -40,7 +51,7 @@ def analyze_article_structure():
                 'Upgrade-Insecure-Requests': '1',
             }
             
-            response = requests.get(article['url'], headers=headers, timeout=30)
+            response = requests.get(article['url'], headers=headers, timeout=30, verify=False, ssl_context=ssl_context)
             response.raise_for_status()
             
             soup = BeautifulSoup(response.content, 'html.parser')
