@@ -9,6 +9,10 @@ import os
 from urllib.parse import urlparse
 import time
 from datetime import datetime
+import urllib3
+
+# Tắt cảnh báo SSL
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def download_images_from_json(json_file):
     """Tải ảnh từ file JSON đã crawl"""
@@ -70,14 +74,34 @@ def download_images_from_json(json_file):
             # Tải ảnh
             try:
                 print(f"      📥 Đang tải ảnh {j+1}: {img_filename}")
-                response = requests.get(img_url, headers=headers, timeout=10, verify=False)
+                
+                # Xử lý URL đặc biệt
+                processed_url = img_url
+                if '@@$$' in img_url:
+                    # Thay thế @@$$ bằng //
+                    processed_url = img_url.replace('@@$$', '//')
+                
+                response = requests.get(processed_url, headers=headers, timeout=15, verify=False)
                 response.raise_for_status()
+                
+                # Kiểm tra content-type
+                content_type = response.headers.get('content-type', '')
+                if not content_type.startswith('image/'):
+                    print(f"      ⚠️  URL không phải ảnh: {content_type}")
+                    continue
                 
                 # Lưu ảnh
                 with open(img_path, 'wb') as f:
                     f.write(response.body)
                 
-                print(f"      ✅ Đã tải thành công: {img_filename}")
+                # Kiểm tra file size
+                file_size = os.path.getsize(img_path)
+                if file_size == 0:
+                    print(f"      ❌ File ảnh trống: {img_filename}")
+                    os.remove(img_path)  # Xóa file trống
+                    continue
+                
+                print(f"      ✅ Đã tải thành công: {img_filename} ({file_size} bytes)")
                 downloaded_images += 1
                 
                 # Delay nhỏ để tránh gây tải cho server
@@ -85,6 +109,9 @@ def download_images_from_json(json_file):
                 
             except Exception as e:
                 print(f"      ❌ Lỗi tải ảnh {img_filename}: {e}")
+                # Xóa file lỗi nếu có
+                if os.path.exists(img_path):
+                    os.remove(img_path)
     
     print("\n" + "=" * 60)
     print(f"📊 KẾT QUẢ TẢI ẢNH:")
