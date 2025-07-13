@@ -275,17 +275,17 @@ class PhapLuatSpider(scrapy.Spider):
             # Lấy nội dung chính từ content_wrapper
             main_content = content_element.css('.content_wrapper')
             if main_content:
-                content = main_content[0].get()
+                content_html = main_content[0].get()
             else:
-                content = content_element.get()
+                content_html = content_element.get()
             
             # Làm sạch nội dung
-            content = re.sub(r'<script[^>]*>.*?</script>', '', content, flags=re.DOTALL)
-            content = re.sub(r'<style[^>]*>.*?</style>', '', content, flags=re.DOTALL)
-            content = re.sub(r'<!--.*?-->', '', content, flags=re.DOTALL)
+            content_html = re.sub(r'<script[^>]*>.*?</script>', '', content_html, flags=re.DOTALL)
+            content_html = re.sub(r'<style[^>]*>.*?</style>', '', content_html, flags=re.DOTALL)
+            content_html = re.sub(r'<!--.*?-->', '', content_html, flags=re.DOTALL)
             
             # Chuyển HTML thành text
-            content_text = Selector(text=content).get()
+            content_text = Selector(text=content_html).get()
             
             # Loại bỏ khoảng trắng thừa
             content_text = re.sub(r'\s+', ' ', content_text).strip()
@@ -295,6 +295,16 @@ class PhapLuatSpider(scrapy.Spider):
             
             print(f"DEBUG: Content length after cleaning: {len(content_text)}")
             print(f"DEBUG: Content preview: {content_text[:200]}...")
+            
+            # Thêm vào content_parts
+            if content_text:
+                content_parts.append(content_text)
+        
+        # Nếu không có content_parts, thử lấy text trực tiếp từ content_element
+        if not content_parts and content_element:
+            content_text = content_element.xpath('string()').get()
+            if content_text:
+                content_parts.append(content_text.strip())
         
         content = ' '.join([part.strip() for part in content_parts if part.strip()])
         
