@@ -172,40 +172,64 @@ class PhapLuatSpider(scrapy.Spider):
         if not summary:
             summary = response.css('.summary::text, .desc::text, .sapo::text, .lead::text').get()
         
-        # Lấy nội dung đầy đủ - thử nhiều selector
+        # Lấy nội dung đầy đủ - loại bỏ phần bài viết liên quan
         content_selectors = [
-            '.content-detail p',
-            '.article-content p',
-            '.content p',
-            '.detail-content p',
-            '.article-body p',
-            '.post-content p',
-            '.entry-content p'
+            '.content-detail',
+            '.article-content',
+            '.content',
+            '.detail-content',
+            '.article-body',
+            '.post-content'
         ]
         
         content_parts = []
+        content_element = None
+        
+        # Tìm phần content chính
         for selector in content_selectors:
-            content_parts = response.css(selector + '::text').getall()
-            if content_parts:
-                self.logger.info(f"Tìm thấy nội dung với selector: {selector}")
+            content_element = response.css(selector).first()
+            if content_element:
+                self.logger.info(f"Tìm thấy content element với selector: {selector}")
                 break
         
-        # Nếu không tìm thấy với selector p, thử lấy toàn bộ content
-        if not content_parts:
-            content_selectors_div = [
-                '.content-detail',
-                '.article-content',
-                '.content',
-                '.detail-content',
-                '.article-body',
-                '.post-content'
-            ]
-            for selector in content_selectors_div:
-                content_text = response.css(selector + '::text').get()
+        if content_element:
+            # Loại bỏ các phần không phải nội dung chính trước khi lấy text
+            # Xóa phần list-concern (bài viết liên quan)
+            for concern in content_element.css('.list-concern, #plhMain_NewsDetail1_divRelation'):
+                concern.extract()
+            
+            # Xóa phần widget_info (bài viết liên quan)
+            for widget in content_element.css('.widget_info'):
+                widget.extract()
+            
+            # Xóa phần boxdata (video, ảnh liên quan)
+            for box in content_element.css('.boxdata'):
+                box.extract()
+            
+            # Xóa phần likeshare (chia sẻ mạng xã hội)
+            for share in content_element.css('.likeshare'):
+                share.extract()
+            
+            # Xóa phần keysword (từ khóa)
+            for keyword in content_element.css('.keysword'):
+                keyword.extract()
+            
+            # Xóa phần btt-bottom (phần cuối trang)
+            for bottom in content_element.css('.btt-bottom'):
+                bottom.extract()
+            
+            # Xóa iframe (video comment)
+            for iframe in content_element.css('iframe'):
+                iframe.extract()
+            
+            # Lấy text từ các thẻ p trong content đã được lọc
+            content_parts = content_element.css('p::text').getall()
+            
+            # Nếu không có thẻ p, lấy text trực tiếp
+            if not content_parts:
+                content_text = content_element.xpath('string()').get()
                 if content_text:
                     content_parts = [content_text]
-                    self.logger.info(f"Tìm thấy nội dung với selector div: {selector}")
-                    break
         
         content = ' '.join([part.strip() for part in content_parts if part.strip()])
         
