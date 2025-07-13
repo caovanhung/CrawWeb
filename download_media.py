@@ -63,14 +63,16 @@ class MediaDownloader:
     def download_file(self, url, filepath):
         """Tải file từ URL"""
         try:
+            print(f"      Đang tải: {url}")
             response = self.session.get(url, headers=self.headers, timeout=30)
             response.raise_for_status()
             
             with open(filepath, 'wb') as f:
                 f.write(response.content)
+            print(f"      ✅ Tải thành công: {filepath}")
             return True
         except Exception as e:
-            print(f"  Lỗi tải {url}: {e}")
+            print(f"      ❌ Lỗi tải {url}: {e}")
             return False
     
     def extract_images_from_html(self, html_content, article_url):
