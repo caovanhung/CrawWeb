@@ -130,22 +130,28 @@ class PhapLuatSpider(scrapy.Spider):
         if not title:
             # Thử lấy bằng XPath string() trước
             title = response.css('h1.detail-title').xpath('string()').get()
+            print(f"DEBUG: h1.detail-title string(): '{title}'")
             self.logger.info(f"DEBUG: h1.detail-title string(): '{title}'")
             if not title or not title.strip():
                 # Thử lấy bằng ::text
                 title = response.css('h1.detail-title::text').get()
+                print(f"DEBUG: h1.detail-title::text: '{title}'")
                 self.logger.info(f"DEBUG: h1.detail-title::text: '{title}'")
             if not title or not title.strip():
                 # Thử lấy toàn bộ h1
                 all_h1 = response.css('h1')
                 for i, h1 in enumerate(all_h1):
+                    print(f"DEBUG: h1[{i}]: {h1.get()}")
                     self.logger.info(f"DEBUG: h1[{i}]: {h1.get()}")
                 # Thử lấy text của h1 đầu tiên
                 if all_h1:
                     title = all_h1[0].xpath('string()').get()
+                    print(f"DEBUG: h1[0] string(): '{title}'")
                     self.logger.info(f"DEBUG: h1[0] string(): '{title}'")
             if title:
                 title = ' '.join(title.split())
+                print(f"DEBUG: Final title: '{title}'")
+                self.logger.info(f"DEBUG: Final title: '{title}'")
         
         # Nếu chưa có summary từ trang danh sách, lấy từ trang chi tiết
         if not summary:
