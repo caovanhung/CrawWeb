@@ -275,29 +275,25 @@ class PhapLuatSpider(scrapy.Spider):
             # Lấy nội dung chính từ content_wrapper
             main_content = content_element.css('.content_wrapper')
             if main_content:
-                content_html = main_content[0].get()
+                content_text = main_content[0].xpath('string()').get()
             else:
-                content_html = content_element.get()
+                content_text = content_element.xpath('string()').get()
             
             # Làm sạch nội dung
-            content_html = re.sub(r'<script[^>]*>.*?</script>', '', content_html, flags=re.DOTALL)
-            content_html = re.sub(r'<style[^>]*>.*?</style>', '', content_html, flags=re.DOTALL)
-            content_html = re.sub(r'<!--.*?-->', '', content_html, flags=re.DOTALL)
-            
-            # Chuyển HTML thành text
-            content_text = Selector(text=content_html).get()
-            
-            # Loại bỏ khoảng trắng thừa
-            content_text = re.sub(r'\s+', ' ', content_text).strip()
-            
-            # Loại bỏ các dòng trống
-            content_text = re.sub(r'\n\s*\n', '\n', content_text)
-            
-            print(f"DEBUG: Content length after cleaning: {len(content_text)}")
-            print(f"DEBUG: Content preview: {content_text[:200]}...")
-            
-            # Thêm vào content_parts
             if content_text:
+                # Loại bỏ khoảng trắng thừa
+                content_text = re.sub(r'\s+', ' ', content_text).strip()
+                
+                # Loại bỏ các dòng trống
+                content_text = re.sub(r'\n\s*\n', '\n', content_text)
+                
+                # Loại bỏ các ký tự đặc biệt không cần thiết
+                content_text = re.sub(r'[\r\t]', ' ', content_text)
+                
+                print(f"DEBUG: Content length after cleaning: {len(content_text)}")
+                print(f"DEBUG: Content preview: {content_text[:200]}...")
+                
+                # Thêm vào content_parts
                 content_parts.append(content_text)
         
         # Nếu không có content_parts, thử lấy text trực tiếp từ content_element
