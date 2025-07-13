@@ -307,7 +307,13 @@ class PhapLuatSpider(scrapy.Spider):
             
             # Cắt nội dung tại điểm kết thúc bài viết chính (TTXVN)
             if '(TTXVN)' in content_text:
-                content_text = content_text.split('(TTXVN)')[0] + '(TTXVN)'
+                # Tìm vị trí cuối cùng của (TTXVN) và cắt từ đó
+                parts = content_text.split('(TTXVN)')
+                if len(parts) > 1:
+                    # Lấy phần đầu tiên + (TTXVN)
+                    content_text = parts[0] + '(TTXVN)'
+                    # Loại bỏ tất cả phần còn lại
+                    content_text = content_text.strip()
             
             content = content_text
         
