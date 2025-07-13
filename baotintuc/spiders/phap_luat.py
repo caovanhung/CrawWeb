@@ -150,7 +150,8 @@ class PhapLuatSpider(scrapy.Spider):
                 title = response.css(selector).get()
                 self.logger.info(f"Thử selector '{selector}': '{title}'")
                 if title and title.strip():
-                    self.logger.info(f"Tìm thấy title với selector: {selector}")
+                    title = title.strip()
+                    self.logger.info(f"Tìm thấy title với selector: {selector} - Title: {title[:50]}...")
                     break
         
         # Nếu chưa có summary từ trang danh sách, lấy từ trang chi tiết
