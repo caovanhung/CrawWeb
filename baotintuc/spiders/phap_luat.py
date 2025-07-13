@@ -120,6 +120,7 @@ class PhapLuatSpider(scrapy.Spider):
         
         # Debug: In ra URL bài viết
         self.logger.info(f"Đang parse bài viết: {response.url}")
+        print(f"TEST PRINT: Đang parse bài viết: {response.url}")
         
         # Lấy thông tin từ meta
         title = response.meta.get('title', '')
@@ -128,6 +129,8 @@ class PhapLuatSpider(scrapy.Spider):
         
         # Nếu chưa có title từ trang danh sách, lấy từ trang chi tiết
         if not title:
+            print("TEST PRINT: Bắt đầu lấy title từ trang chi tiết")
+            self.logger.info("Bắt đầu lấy title từ trang chi tiết")
             # Thử lấy bằng XPath string() trước - lấy toàn bộ text content
             title = response.css('h1.detail-title').xpath('string()').get()
             print(f"DEBUG: h1.detail-title string(): '{title}'")
