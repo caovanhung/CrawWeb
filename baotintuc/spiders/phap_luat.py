@@ -283,14 +283,6 @@ class PhapLuatSpider(scrapy.Spider):
                     'filename': img_filename,
                     'local_path': img_path
                 })
-                
-                # Thêm thông tin ảnh vào danh sách (sẽ tải sau)
-                images.append({
-                    'url': img_url,
-                    'alt': img_alt,
-                    'filename': img_filename,
-                    'local_path': img_path
-                })
         
         return images
     
