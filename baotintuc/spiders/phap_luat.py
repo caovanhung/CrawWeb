@@ -246,6 +246,12 @@ class PhapLuatSpider(scrapy.Spider):
         """Tải ảnh từ bài viết"""
         images = []
         
+        # Chỉ lấy ảnh từ trang chi tiết bài viết, không phải trang danh sách
+        if '/phap-luat-' in response.url and response.url.endswith('.htm'):
+            # Đây là trang danh sách, không lấy ảnh
+            self.logger.info("Đây là trang danh sách, bỏ qua việc lấy ảnh")
+            return images
+        
         # Chỉ tìm ảnh trong phần nội dung chính của bài viết
         content_selectors = [
             '.content-detail',

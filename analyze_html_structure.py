@@ -120,16 +120,13 @@ def analyze_html_structure(html_file):
         print()
 
 def main():
-    # Tìm file HTML mới nhất
-    articles_dir = 'output/articles'
-    html_files = [f for f in os.listdir(articles_dir) if f.endswith('.html')]
+    # Sử dụng file debug_full_page.html có sẵn
+    html_file = 'debug_full_page.html'
     
-    if not html_files:
-        print("❌ Không tìm thấy file HTML nào")
+    if not os.path.exists(html_file):
+        print("❌ Không tìm thấy file debug_full_page.html")
         return
     
-    # Lấy file đầu tiên để phân tích
-    html_file = os.path.join(articles_dir, html_files[0])
     analyze_html_structure(html_file)
 
 if __name__ == "__main__":
