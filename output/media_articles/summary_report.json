@@ -1,89 +1,89 @@
 {
   "total_articles": 10,
-  "processed_at": "2025-07-13T23:32:08.104149",
+  "processed_at": "2025-07-13T23:37:19.718529",
   "total_images_found": 0,
   "total_images_downloaded": 0,
-  "total_videos_found": 0,
+  "total_videos_found": 10,
   "base_directory": "output/media_articles",
   "reports": [
     {
       "article_title": "Bắt giữ vụ buôn lậu thuốc lá số lượng lớn",
-      "processed_at": "2025-07-13T23:31:57.614197",
+      "processed_at": "2025-07-13T23:37:07.023697",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/01_Bắt giữ vụ buôn lậu thuốc lá số lượng lớn"
     },
     {
       "article_title": "Điều tra, làm rõ vụ án mạng khiến hai anh em ruột tử vong",
-      "processed_at": "2025-07-13T23:31:58.669250",
+      "processed_at": "2025-07-13T23:37:08.329247",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/02_Điều tra, làm rõ vụ án mạng khiến hai anh em ruột tử vong"
     },
     {
       "article_title": "Đề nghị truy tố 3 bị can liên quan sai phạm khu 'đất vàng' tại TP Hồ Chí Minh",
-      "processed_at": "2025-07-13T23:31:59.723424",
+      "processed_at": "2025-07-13T23:37:09.624964",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/03_Đề nghị truy tố 3 bị can liên quan sai phạm khu 'đất vàng' tại TP Hồ Chí Minh"
     },
     {
       "article_title": "Vụ án mạng khiến hai anh em ruột tử vong: Tạm giữ 2 nghi phạm",
-      "processed_at": "2025-07-13T23:32:00.776941",
+      "processed_at": "2025-07-13T23:37:10.917343",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/04_Vụ án mạng khiến hai anh em ruột tử vong_ Tạm giữ 2 nghi phạm"
     },
     {
       "article_title": "Tây Ninh: Bắt giữ nghi can trong vụ giết người ở phường Long An",
-      "processed_at": "2025-07-13T23:32:01.829962",
+      "processed_at": "2025-07-13T23:37:12.227156",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/05_Tây Ninh_ Bắt giữ nghi can trong vụ giết người ở phường Long An"
     },
     {
       "article_title": "Nghi phạm trong vụ dùng kéo sát hại mẹ vợ ở Tây Ninh về đầu thú",
-      "processed_at": "2025-07-13T23:32:02.882593",
+      "processed_at": "2025-07-13T23:37:13.510037",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/06_Nghi phạm trong vụ dùng kéo sát hại mẹ vợ ở Tây Ninh về đầu thú"
     },
     {
       "article_title": "Ngăn chặn nhóm thanh thiếu niên mang hung khí tụ tập khu vực đèo Đá Trắng",
-      "processed_at": "2025-07-13T23:32:03.935945",
+      "processed_at": "2025-07-13T23:37:14.800891",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/07_Ngăn chặn nhóm thanh thiếu niên mang hung khí tụ tập khu vực đèo Đá Trắng"
     },
     {
       "article_title": "Đồng Nai: Xe tải tông xe máy, một người tử vong tại chỗ",
-      "processed_at": "2025-07-13T23:32:04.989023",
+      "processed_at": "2025-07-13T23:37:16.092201",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/08_Đồng Nai_ Xe tải tông xe máy, một người tử vong tại chỗ"
     },
     {
       "article_title": "Công an Hải Phòng thông tin vụ bắt giữ 'Tiến bịp' về tội tổ chức sử dụng trái phép chất ma túy",
-      "processed_at": "2025-07-13T23:32:06.049434",
+      "processed_at": "2025-07-13T23:37:17.411274",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/09_Công an Hải Phòng thông tin vụ bắt giữ 'Tiến bịp' về tội tổ chức sử dụng trái phép chất ma túy"
     },
     {
       "article_title": "Khởi tố Chủ tịch hội đồng quản trị, Giám đốc Công ty Hoành Bồ",
-      "processed_at": "2025-07-13T23:32:07.102692",
+      "processed_at": "2025-07-13T23:37:18.717048",
       "images_found": 0,
       "images_downloaded": 0,
-      "videos_found": 0,
+      "videos_found": 1,
       "article_dir": "output/media_articles/10_Khởi tố Chủ tịch hội đồng quản trị, Giám đốc Công ty Hoành Bồ"
     }
   ]
