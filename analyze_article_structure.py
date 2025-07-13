@@ -56,7 +56,10 @@ def analyze_article_structure():
                 'Upgrade-Insecure-Requests': '1',
             }
             
-            response = requests.get(article['url'], headers=headers, timeout=30, verify=False, ssl_context=ssl_context)
+            # Sử dụng session với SSL context
+            session = requests.Session()
+            session.verify = False
+            response = session.get(article['url'], headers=headers, timeout=30)
             response.raise_for_status()
             
             soup = BeautifulSoup(response.content, 'html.parser')
