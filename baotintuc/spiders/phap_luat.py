@@ -128,32 +128,24 @@ class PhapLuatSpider(scrapy.Spider):
         
         # Nếu chưa có title từ trang danh sách, lấy từ trang chi tiết
         if not title:
-            title_selectors = [
-                'h1.detail-title::text',  # Selector chính xác từ HTML
-                'h1.title::text',
-                'h1::text', 
-                '.title::text',
-                '.article-title::text',
-                '.post-title::text',
-                '.entry-title::text',
-                '.content h1::text',
-                '.article h1::text',
-                '.main h1::text',
-                '.news-title::text'
-            ]
-            
-            # Debug: In ra tất cả các h1 để kiểm tra
-            all_h1 = response.css('h1::text').getall()
-            self.logger.info(f"Tất cả h1 tags: {all_h1}")
-            
-            for selector in title_selectors:
-                title = response.css(selector).get()
-                self.logger.info(f"Thử selector '{selector}': '{title}'")
-                if title and title.strip():
-                    # Normalize whitespace and newlines
-                    title = ' '.join(title.split())
-                    self.logger.info(f"Tìm thấy title với selector: {selector} - Title: {title[:50]}...")
-                    break
+            # Thử lấy bằng XPath string() trước
+            title = response.css('h1.detail-title').xpath('string()').get()
+            self.logger.info(f"DEBUG: h1.detail-title string(): '{title}'")
+            if not title or not title.strip():
+                # Thử lấy bằng ::text
+                title = response.css('h1.detail-title::text').get()
+                self.logger.info(f"DEBUG: h1.detail-title::text: '{title}'")
+            if not title or not title.strip():
+                # Thử lấy toàn bộ h1
+                all_h1 = response.css('h1')
+                for i, h1 in enumerate(all_h1):
+                    self.logger.info(f"DEBUG: h1[{i}]: {h1.get()}")
+                # Thử lấy text của h1 đầu tiên
+                if all_h1:
+                    title = all_h1[0].xpath('string()').get()
+                    self.logger.info(f"DEBUG: h1[0] string(): '{title}'")
+            if title:
+                title = ' '.join(title.split())
         
         # Nếu chưa có summary từ trang danh sách, lấy từ trang chi tiết
         if not summary:
