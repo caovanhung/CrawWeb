@@ -150,7 +150,8 @@ class PhapLuatSpider(scrapy.Spider):
                 title = response.css(selector).get()
                 self.logger.info(f"Thử selector '{selector}': '{title}'")
                 if title and title.strip():
-                    title = title.strip()
+                    # Normalize whitespace and newlines
+                    title = ' '.join(title.split())
                     self.logger.info(f"Tìm thấy title với selector: {selector} - Title: {title[:50]}...")
                     break
         
