@@ -264,6 +264,38 @@ class PhapLuatSpider(scrapy.Spider):
             for sapo in content_element.css('.sapo'):
                 sapo.extract()
             
+            # Xóa phần widget (bài viết liên quan)
+            for widget in content_element.css('.widget'):
+                widget.extract()
+            
+            # Xóa phần boxnews (tin đọc nhiều nhất, tin cùng chuyên mục)
+            for boxnews in content_element.css('.boxnews'):
+                boxnews.extract()
+            
+            # Xóa phần boxlist (tin mới nhất)
+            for boxlist in content_element.css('.boxlist'):
+                boxlist.extract()
+            
+            # Xóa phần author (tác giả)
+            for author in content_element.css('.author'):
+                author.extract()
+            
+            # Xóa phần likeshare (chia sẻ mạng xã hội)
+            for likeshare in content_element.css('.likeshare'):
+                likeshare.extract()
+            
+            # Xóa phần keysword (từ khóa)
+            for keysword in content_element.css('.keysword'):
+                keysword.extract()
+            
+            # Xóa phần btt-bottom (phần cuối trang)
+            for btt_bottom in content_element.css('.btt-bottom'):
+                btt_bottom.extract()
+            
+            # Xóa phần iframe (comment)
+            for iframe in content_element.css('iframe'):
+                iframe.extract()
+            
             # Xóa tất cả script và style
             for script in content_element.css('script, style'):
                 script.extract()
@@ -271,6 +303,14 @@ class PhapLuatSpider(scrapy.Spider):
             # Xóa tất cả quảng cáo
             for ad in content_element.css('[id*="adm"], [class*="ad"], [id*="ad"]'):
                 ad.extract()
+            
+            # Xóa tất cả ins (quảng cáo)
+            for ins in content_element.css('ins'):
+                ins.extract()
+            
+            # Xóa tất cả noscript
+            for noscript in content_element.css('noscript'):
+                noscript.extract()
             
             # Lấy nội dung chính từ content_wrapper
             main_content = content_element.css('.content_wrapper')
