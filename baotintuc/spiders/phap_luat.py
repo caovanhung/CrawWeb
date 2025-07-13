@@ -262,8 +262,9 @@ class PhapLuatSpider(scrapy.Spider):
         # Tìm phần nội dung chính
         content_element = None
         for selector in content_selectors:
-            content_element = response.css(selector).first()
-            if content_element:
+            elements = response.css(selector)
+            if elements:
+                content_element = elements[0]  # Lấy phần tử đầu tiên
                 self.logger.info(f"Tìm thấy nội dung với selector: {selector}")
                 break
         
