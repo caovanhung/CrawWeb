@@ -31,6 +31,8 @@ class MediaDownloader:
         class CustomHTTPAdapter(HTTPAdapter):
             def init_poolmanager(self, *args, **kwargs):
                 context = create_urllib3_context()
+                context.check_hostname = False
+                context.verify_mode = ssl.CERT_NONE
                 context.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
                 kwargs['ssl_context'] = context
                 return super().init_poolmanager(*args, **kwargs)
