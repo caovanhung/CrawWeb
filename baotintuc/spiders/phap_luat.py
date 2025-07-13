@@ -127,43 +127,46 @@ class PhapLuatSpider(scrapy.Spider):
         summary = response.meta.get('summary', '')
         date_str = response.meta.get('date_str', '')
         
-        # Nếu chưa có title từ trang danh sách, lấy từ trang chi tiết
-        if not title:
-            print("TEST PRINT: Bắt đầu lấy title từ trang chi tiết")
-            self.logger.info("Bắt đầu lấy title từ trang chi tiết")
-            # Thử lấy bằng XPath string() trước - lấy toàn bộ text content
-            title = response.css('h1.detail-title').xpath('string()').get()
-            print(f"DEBUG: h1.detail-title string(): '{title}'")
-            self.logger.info(f"DEBUG: h1.detail-title string(): '{title}'")
+        # Luôn thử lấy title từ trang chi tiết (ưu tiên hơn title từ trang danh sách)
+        print("TEST PRINT: Bắt đầu lấy title từ trang chi tiết")
+        self.logger.info("Bắt đầu lấy title từ trang chi tiết")
+        
+        # Thử lấy bằng XPath string() trước - lấy toàn bộ text content
+        detail_title = response.css('h1.detail-title').xpath('string()').get()
+        print(f"DEBUG: h1.detail-title string(): '{detail_title}'")
+        self.logger.info(f"DEBUG: h1.detail-title string(): '{detail_title}'")
+        
+        # Nếu không có, thử lấy bằng ::text
+        if not detail_title or not detail_title.strip():
+            detail_title = response.css('h1.detail-title::text').get()
+            print(f"DEBUG: h1.detail-title::text: '{detail_title}'")
+            self.logger.info(f"DEBUG: h1.detail-title::text: '{detail_title}'")
+        
+        # Nếu vẫn không có, thử lấy h1 đầu tiên
+        if not detail_title or not detail_title.strip():
+            all_h1 = response.css('h1')
+            print(f"DEBUG: Tìm thấy {len(all_h1)} h1 tags")
+            self.logger.info(f"DEBUG: Tìm thấy {len(all_h1)} h1 tags")
             
-            # Nếu không có, thử lấy bằng ::text
-            if not title or not title.strip():
-                title = response.css('h1.detail-title::text').get()
-                print(f"DEBUG: h1.detail-title::text: '{title}'")
-                self.logger.info(f"DEBUG: h1.detail-title::text: '{title}'")
+            for i, h1 in enumerate(all_h1):
+                h1_text = h1.xpath('string()').get()
+                print(f"DEBUG: h1[{i}] string(): '{h1_text}'")
+                self.logger.info(f"DEBUG: h1[{i}] string(): '{h1_text}'")
             
-            # Nếu vẫn không có, thử lấy h1 đầu tiên
-            if not title or not title.strip():
-                all_h1 = response.css('h1')
-                print(f"DEBUG: Tìm thấy {len(all_h1)} h1 tags")
-                self.logger.info(f"DEBUG: Tìm thấy {len(all_h1)} h1 tags")
-                
-                for i, h1 in enumerate(all_h1):
-                    h1_text = h1.xpath('string()').get()
-                    print(f"DEBUG: h1[{i}] string(): '{h1_text}'")
-                    self.logger.info(f"DEBUG: h1[{i}] string(): '{h1_text}'")
-                
-                # Lấy text của h1 đầu tiên
-                if all_h1:
-                    title = all_h1[0].xpath('string()').get()
-                    print(f"DEBUG: h1[0] string(): '{title}'")
-                    self.logger.info(f"DEBUG: h1[0] string(): '{title}'")
-            
-            # Chuẩn hóa whitespace
-            if title:
-                title = ' '.join(title.split())
-                print(f"DEBUG: Final title: '{title}'")
-                self.logger.info(f"DEBUG: Final title: '{title}'")
+            # Lấy text của h1 đầu tiên
+            if all_h1:
+                detail_title = all_h1[0].xpath('string()').get()
+                print(f"DEBUG: h1[0] string(): '{detail_title}'")
+                self.logger.info(f"DEBUG: h1[0] string(): '{detail_title}'")
+        
+        # Chuẩn hóa whitespace và sử dụng title từ trang chi tiết nếu có
+        if detail_title and detail_title.strip():
+            title = ' '.join(detail_title.split())
+            print(f"DEBUG: Final title from detail page: '{title}'")
+            self.logger.info(f"DEBUG: Final title from detail page: '{title}'")
+        else:
+            print(f"DEBUG: Using title from list page: '{title}'")
+            self.logger.info(f"DEBUG: Using title from list page: '{title}'")
         
         # Nếu chưa có summary từ trang danh sách, lấy từ trang chi tiết
         if not summary:
