@@ -90,6 +90,11 @@ class PhapLuatSpider(scrapy.Spider):
             if article_link:
                 article_url = urljoin(response.url, article_link)
                 
+                # Chỉ crawl bài viết từ section Pháp luật
+                if '/phap-luat/' not in article_url:
+                    self.logger.info(f"Bỏ qua bài viết không thuộc section Pháp luật: {article_url}")
+                    continue
+                
                 # Lấy thông tin cơ bản từ trang danh sách
                 title = article.css('h3 a::text, h2 a::text, .title a::text, a::text').get()
                 summary = article.css('.summary::text, .desc::text, .sapo::text').get()
