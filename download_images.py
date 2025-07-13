@@ -92,7 +92,7 @@ def download_images_from_json(json_file):
                 
                 # Lưu ảnh
                 with open(img_path, 'wb') as f:
-                    f.write(response.body)
+                    f.write(response.content)
                 
                 # Kiểm tra file size
                 file_size = os.path.getsize(img_path)
