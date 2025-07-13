@@ -136,8 +136,14 @@ class PhapLuatSpider(scrapy.Spider):
                 '.main h1::text',
                 '.news-title::text'
             ]
+            
+            # Debug: In ra tất cả các h1 để kiểm tra
+            all_h1 = response.css('h1::text').getall()
+            self.logger.info(f"Tất cả h1 tags: {all_h1}")
+            
             for selector in title_selectors:
                 title = response.css(selector).get()
+                self.logger.info(f"Thử selector '{selector}': '{title}'")
                 if title and title.strip():
                     self.logger.info(f"Tìm thấy title với selector: {selector}")
                     break
