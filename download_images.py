@@ -6,6 +6,8 @@ Script để tải ảnh từ kết quả JSON đã crawl
 import json
 import requests
 import os
+import re
+import hashlib
 from urllib.parse import urlparse
 import time
 from datetime import datetime
@@ -46,7 +48,8 @@ def download_images_from_json(json_file):
     downloaded_images = 0
     
     for i, article in enumerate(data):
-        print(f"\n📰 Bài viết {i+1}: {article.get('title', 'N/A')[:50]}...")
+        title = article.get('title', 'N/A')
+        print(f"\n📰 Bài viết {i+1}: {title[:50]}...")
         
         # Lấy danh sách ảnh từ bài viết
         images = article.get('images', [])
@@ -57,13 +60,36 @@ def download_images_from_json(json_file):
         print(f"   🖼️  Tìm thấy {len(images)} ảnh")
         total_images += len(images)
         
+        # Tạo thư mục cho bài viết này
+        safe_title = re.sub(r'[^\w\s-]', '', title).strip()
+        safe_title = re.sub(r'[-\s]+', '-', safe_title)
+        safe_title = safe_title[:30]  # Giới hạn độ dài tên thư mục
+        
+        # Tạo hash từ URL để tránh trùng tên
+        url_hash = hashlib.md5(article.get('url', '').encode()).hexdigest()[:8]
+        article_dir = os.path.join(images_dir, f"{safe_title}_{url_hash}")
+        os.makedirs(article_dir, exist_ok=True)
+        
+        print(f"   📁 Thư mục: {os.path.basename(article_dir)}")
+        
         for j, img_info in enumerate(images):
             img_url = img_info.get('url')
-            img_filename = img_info.get('filename')
-            img_path = img_info.get('local_path')
+            img_alt = img_info.get('alt', f'image_{j}')
             
-            if not img_url or not img_filename:
+            if not img_url:
                 continue
+            
+            # Tạo tên file ảnh mới
+            ext = os.path.splitext(img_url)[1]
+            if not ext:
+                ext = '.jpg'
+            
+            safe_alt = re.sub(r'[^\w\s-]', '', img_alt).strip()
+            safe_alt = re.sub(r'[-\s]+', '-', safe_alt)
+            safe_alt = safe_alt[:20]  # Giới hạn độ dài
+            
+            img_filename = f"{j+1:02d}_{safe_alt}{ext}"
+            img_path = os.path.join(article_dir, img_filename)
             
             # Kiểm tra xem ảnh đã tồn tại chưa
             if os.path.exists(img_path):
